@@ -8,6 +8,12 @@
 
 // project for experimental psychology
 
+// orange: 225 170 88
+// green: 1 131 47
+/*if(colour.red >= 20 && colour.red <= 60 &&
+    colour.green >= 60 && colour.green <= 250 &&
+    colour.blue >= 20 && colour.blue <= 70) */
+
 void orange_filter(bitmap_image &image) {
     const unsigned int height = image.height();
     const unsigned int width  = image.width();
@@ -22,10 +28,9 @@ void orange_filter(bitmap_image &image) {
 
             image.get_pixel(x, y, colour);
 
-            // orange = {225, 170, 88}
-            if(colour.red >= 210 && colour.red <= 250 &&
-                colour.green >= 100 && colour.green <= 200 &&
-                colour.blue >= 40 && colour.blue <= 100)   {
+            if(colour.red >= 1 && colour.red <= 40 &&
+                colour.green >= 60 && colour.green <= 250 &&
+                colour.blue >= 1 && colour.blue <= 100)   {
             filtered.set_pixel(x, y, colour);
             }
         }
@@ -33,7 +38,7 @@ void orange_filter(bitmap_image &image) {
 
     // coordy jednego z pingpongow, do znalezienia koloru
     rgb_t colour;
-    image.get_pixel(640, 1850, colour);
+    image.get_pixel(width/2, height/2, colour);
     std::cout << (int)colour.red << " " << (int)colour.green << " " << (int)colour.blue  << "\n";
 
     image = filtered;
@@ -45,10 +50,10 @@ void dfs(int x, int y, int width, int height, std::vector<std::vector<bool> >& v
          std::vector<std::pair<int, int> >& points) {
 
     visited[x][y] = true;
-    for(int i = -1; i <= 1; i++) {
-        for(int j = -1; j <= 1; j++) {
-            if(abs(i) + abs(j) != 1)
-                continue;
+    for(int i = -2; i <= 2; i++) {
+        for(int j = -2; j <= 2; j++) {
+            //if(abs(i) + abs(j) != 1)
+            //    continue;
             if(x + i >= width || x + i < 0 || y + j >= height || y + j < 0)
                 continue;
             if(visited[x + i][y + j])
@@ -83,7 +88,7 @@ void point_filter(bitmap_image &image) {
                 std::vector<std::pair<int, int> > points;
                 dfs(x, y, width, height, visited, points);
                 std::cout << "size of compund = " << points.size() << "\n";
-                if(points.size() > 2000) { // the size of pingpong ball in pixels
+                if(points.size() > 5) { // the size of pingpong ball in pixels
                     balls.push_back(points);
                 }
             }
@@ -101,9 +106,9 @@ void point_filter(bitmap_image &image) {
         mean_x /= (long long)points.size();
         mean_y /= (long long)points.size();
         // drawing full circle with radius r and in gravity center of all points
-        int r = 50;
-        for(int x = std::max(0LL, mean_x - r); x <= std::min((long long)width, mean_x + r); x++) {
-            for(int y = std::max(0LL, mean_y - r); y <= std::min((long long)height, mean_y + r); y++) {
+        int r = 7;
+        for(int x = std::max(0LL, mean_x - r); x < std::min((long long)width, mean_x + r); x++) {
+            for(int y = std::max(0LL, mean_y - r); y < std::min((long long)height, mean_y + r); y++) {
                 if((x - mean_x) * (x - mean_x) + (y - mean_y) * (y - mean_y) < r * r)
                 filtered.set_pixel(x, y, make_colour(255, 255, 255));
             }
@@ -132,8 +137,16 @@ int main(int argc, char* argv[]) {
     orange_filter(image);
     point_filter(image);
 
+    for(int i = 0; i < (int)std::string(".bmp").size(); i++)
+        file.pop_back();
+    file.append("_converted.bmp");
+
+
+
     image.save_image(file);
 
-    std::cout << "successfully converted and saved as converted.bmp\n";
+
+
+    std::cout << "successfully converted and saved as " << file << "\n";
     return 0;
 }

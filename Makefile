@@ -14,7 +14,7 @@
 
 
 COMPILER      = -g++ 
-OPTIONS       = -ansi -pedantic-errors -Wall -Wall -Werror -Wextra -o
+OPTIONS       = -ansi -pedantic-errors -Wall -Wall -Wextra -o
 LINKER_OPT    = -L/usr/lib -lstdc++ -lm -std=c++11
 
 all: filter
