@@ -13,6 +13,10 @@
 /*if(colour.red >= 20 && colour.red <= 60 &&
     colour.green >= 60 && colour.green <= 250 &&
     colour.blue >= 20 && colour.blue <= 70) */
+// w miare poprawne
+/*if(colour.red >= 1 && colour.red <= 40 &&
+    colour.green >= 60 && colour.green <= 250 &&
+    colour.blue >= 1 && colour.blue <= 100)   {*/
 
 void orange_filter(bitmap_image &image) {
     const unsigned int height = image.height();
@@ -29,8 +33,8 @@ void orange_filter(bitmap_image &image) {
             image.get_pixel(x, y, colour);
 
             if(colour.red >= 1 && colour.red <= 40 &&
-                colour.green >= 60 && colour.green <= 250 &&
-                colour.blue >= 1 && colour.blue <= 100)   {
+               colour.green >= 60 && colour.green <= 250 &&
+               colour.blue >= 1 && colour.blue <= 100)   {
             filtered.set_pixel(x, y, colour);
             }
         }
@@ -50,8 +54,9 @@ void dfs(int x, int y, int width, int height, std::vector<std::vector<bool> >& v
          std::vector<std::pair<int, int> >& points) {
 
     visited[x][y] = true;
-    for(int i = -2; i <= 2; i++) {
-        for(int j = -2; j <= 2; j++) {
+    int r = 13;
+    for(int i = -r; i <= r; i++) {
+        for(int j = -r; j <= r; j++) {
             //if(abs(i) + abs(j) != 1)
             //    continue;
             if(x + i >= width || x + i < 0 || y + j >= height || y + j < 0)
@@ -88,7 +93,7 @@ void point_filter(bitmap_image &image) {
                 std::vector<std::pair<int, int> > points;
                 dfs(x, y, width, height, visited, points);
                 std::cout << "size of compund = " << points.size() << "\n";
-                if(points.size() > 5) { // the size of pingpong ball in pixels
+                if(points.size() > 0) { // the size of pingpong ball in pixels
                     balls.push_back(points);
                 }
             }
@@ -106,7 +111,7 @@ void point_filter(bitmap_image &image) {
         mean_x /= (long long)points.size();
         mean_y /= (long long)points.size();
         // drawing full circle with radius r and in gravity center of all points
-        int r = 7;
+        int r = 6;
         for(int x = std::max(0LL, mean_x - r); x < std::min((long long)width, mean_x + r); x++) {
             for(int y = std::max(0LL, mean_y - r); y < std::min((long long)height, mean_y + r); y++) {
                 if((x - mean_x) * (x - mean_x) + (y - mean_y) * (y - mean_y) < r * r)
