@@ -32,10 +32,10 @@ void orange_filter(bitmap_image &image) {
 
             image.get_pixel(x, y, colour);
 
-            if(colour.red >= 1 && colour.red <= 40 &&
-               colour.green >= 60 && colour.green <= 250 &&
-               colour.blue >= 1 && colour.blue <= 100)   {
-            filtered.set_pixel(x, y, colour);
+            if(colour.red >= 0 && colour.red <= 60 &&
+               colour.green >= 60 && colour.green <= 255 &&
+               colour.blue >= 0 && colour.blue <= 60)   {
+            filtered.set_pixel(x, y, make_colour(255, 255, 255));
             }
         }
     }
@@ -54,9 +54,11 @@ void dfs(int x, int y, int width, int height, std::vector<std::vector<bool> >& v
          std::vector<std::pair<int, int> >& points) {
 
     visited[x][y] = true;
-    int r = 13;
+    int r = 5;
     for(int i = -r; i <= r; i++) {
         for(int j = -r; j <= r; j++) {
+            if(i*i + j*j > r*r)
+                continue;
             //if(abs(i) + abs(j) != 1)
             //    continue;
             if(x + i >= width || x + i < 0 || y + j >= height || y + j < 0)
@@ -93,7 +95,7 @@ void point_filter(bitmap_image &image) {
                 std::vector<std::pair<int, int> > points;
                 dfs(x, y, width, height, visited, points);
                 std::cout << "size of compund = " << points.size() << "\n";
-                if(points.size() > 0) { // the size of pingpong ball in pixels
+                if(points.size() > 3) { // the size of pingpong ball in pixels
                     balls.push_back(points);
                 }
             }

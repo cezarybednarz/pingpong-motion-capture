@@ -7,9 +7,9 @@ rm frames/frame*.bmp
 
 make
 
-ffmpeg -ss 00:00:20 -t 00:00:23 -i test_film.mp4 -r 30.0 frames/frame%4d.bmp
+ffmpeg -ss 00:00:04 -t 00:00:10 -i test_film.mp4 -r 30.0 frames/frame%4d.bmp
 
-for i in $(seq -f "%04g" 1 90)
+for i in $(seq -f "%04g" 1 180)
 do
     echo $i
     ./filter "frames/frame$i.bmp"
