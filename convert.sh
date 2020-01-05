@@ -9,10 +9,12 @@ make
 
 ffmpeg -ss 00:00:04 -t 00:00:10 -i test_film.mp4 -r 30.0 frames/frame%4d.bmp
 
-for i in $(seq -f "%04g" 1 180)
+FRAMES=180
+
+for i in $(seq -f "%04g" 1 $FRAMES)
 do
     echo $i
-    ./filter "frames/frame$i.bmp"
+    ./filter "frames/frame$i.bmp" $i $FRAMES 
 done
 rm test_wynik.mp4
 # maybe -crf 60, or change -r

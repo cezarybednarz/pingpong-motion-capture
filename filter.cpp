@@ -6,6 +6,8 @@
 
 #include "bitmap_image.hpp"
 
+int percent;
+
 // project for experimental psychology
 
 // orange: 225 170 88
@@ -40,21 +42,15 @@ void orange_filter(bitmap_image &image) {
         }
     }
 
-    // coordy jednego z pingpongow, do znalezienia koloru
-    rgb_t colour;
-    image.get_pixel(width/2, height/2, colour);
-    std::cout << (int)colour.red << " " << (int)colour.green << " " << (int)colour.blue  << "\n";
-
     image = filtered;
     image.save_image("orange_filter.bmp");
-
 }
 
 void dfs(int x, int y, int width, int height, std::vector<std::vector<bool> >& visited,
          std::vector<std::pair<int, int> >& points) {
 
     visited[x][y] = true;
-    int r = 5;
+    int r = 5 + percent / 4; // zasieg
     for(int i = -r; i <= r; i++) {
         for(int j = -r; j <= r; j++) {
             if(i*i + j*j > r*r)
@@ -74,8 +70,9 @@ void dfs(int x, int y, int width, int height, std::vector<std::vector<bool> >& v
 void point_filter(bitmap_image &image) {
     const unsigned int height = image.height();
     const unsigned int width  = image.width();
-
-    bitmap_image filtered(width, height);
+    
+    //bitmap_image filtered(image); // tworzy canvas z plamami
+    bitmap_image filtered(width, height); // tworzy pusty canvas
 
     std::vector<std::vector<bool> > visited (width , std::vector<bool> (height, 0));
     for(size_t y = 0; y < height; ++y) {
@@ -95,7 +92,7 @@ void point_filter(bitmap_image &image) {
                 std::vector<std::pair<int, int> > points;
                 dfs(x, y, width, height, visited, points);
                 std::cout << "size of compund = " << points.size() << "\n";
-                if(points.size() > 3) { // the size of pingpong ball in pixels
+                if(points.size() > 4) { // the size of pingpong ball in pixels
                     balls.push_back(points);
                 }
             }
@@ -117,7 +114,7 @@ void point_filter(bitmap_image &image) {
         for(int x = std::max(0LL, mean_x - r); x < std::min((long long)width, mean_x + r); x++) {
             for(int y = std::max(0LL, mean_y - r); y < std::min((long long)height, mean_y + r); y++) {
                 if((x - mean_x) * (x - mean_x) + (y - mean_y) * (y - mean_y) < r * r)
-                filtered.set_pixel(x, y, make_colour(255, 255, 255));
+                filtered.set_pixel(x, y, make_colour(120, 120, 120));
             }
         }
     }
@@ -126,13 +123,14 @@ void point_filter(bitmap_image &image) {
     image.save_image("ball_filter.bmp");
 }
 
-int main(int argc, char* argv[]) {
-    if(argc < 2) {
+int main(int argc, char* argv[]) { // filename, frame, total number of frames
+    if(argc < 4) {
         std::cout << "please enter file name\n";
         return -1;
     }
 
     std::string file(argv[1]);
+    percent = 100 * atoi(argv[2]) / atoi(argv[3]);
 
     bitmap_image image(file);
 
@@ -155,5 +153,6 @@ int main(int argc, char* argv[]) {
 
 
     std::cout << "successfully converted and saved as " << file << "\n";
+    printf("[%d%]\n", percent);
     return 0;
 }
