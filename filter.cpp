@@ -13,6 +13,7 @@ int percent;
 void orange_filter(bitmap_image &image) {
     const unsigned int height = image.height();
     const unsigned int width  = image.width();
+    printf("image dimensions = %d %d\n", (int)height, (int)width);
 
     bitmap_image filtered(width, height);
 
@@ -24,9 +25,9 @@ void orange_filter(bitmap_image &image) {
 
             image.get_pixel(x, y, colour);
 
-            if(colour.red >= 0 && colour.red <= 65 &&
-               colour.green >= 55 && colour.green <= 255 &&
-               colour.blue >= 0 && colour.blue <= 65)   {
+            if(colour.red >= 5 && colour.red <= 55 &&
+               colour.green >= 65 + percent / 10 - 10 && colour.green <= 240 &&
+               colour.blue >= 5 && colour.blue <= 55)   {
             filtered.set_pixel(x, y, make_colour(255, 255, 255));
             }
         }
@@ -82,7 +83,7 @@ void point_filter(bitmap_image &image) {
                 std::vector<std::pair<int, int> > points;
                 dfs(x, y, width, height, visited, points);
                 std::cout << "size of compund = " << points.size() << "\n";
-                if(points.size() > 2 + percent / 30) { // the size of pingpong ball in pixels
+                if(points.size() > 2 + percent / 10) { // the size of pingpong ball in pixels
                     balls.push_back(points);
                 }
             }
